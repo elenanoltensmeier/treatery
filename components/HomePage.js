@@ -25,7 +25,7 @@ class HomePage extends Component {
         rowHasChanged: (row1, row2) => row1 !== row2,
       })
     };
-    this.itemsRef = this.getRef().child('items');
+    this.itemsRef = this.getRef().child('photos');
   }
   getRef() {
     return firebase.database().ref();
@@ -38,10 +38,10 @@ class HomePage extends Component {
       snap.forEach((child) => {
         items.push({
           title: child.val().title,
+          url: child.val().url,
           _key: child.key
         });
       });
-
       this.setState({
         dataSource: this.state.dataSource.cloneWithRows(items)
       });
@@ -59,13 +59,12 @@ class HomePage extends Component {
           renderRow={this._renderItem.bind(this)}
           enableEmptySections={true}
           style={styles.listview}/>
-        <TextInput
+        {/* <TextInput
           style={{height: 40}}
           placeholder="Type here to add!"
           onChangeText={(text) => this.setState({text})}
         />
-        <ActionButton onPress={this._addItem.bind(this)} title="Add" />
-
+        <ActionButton onPress={this._addItem.bind(this)} title="Add" /> */}
       </KeyboardAvoidingView>
     )
   }
@@ -74,15 +73,16 @@ class HomePage extends Component {
   }
   _renderItem(item) {
     const onPress = () => {
-      Alert.alert(
-        'Delete: '+item.title+'?',
-        null,
-        [
-          {text: 'Yes', onPress: (text) => this.itemsRef.child(item._key).remove()},
-          {text: 'Cancel', onPress: (text) => console.log('Cancelled')}
-        ],
-        {cancelable: false}
-      );
+      Actions.PhotoPage({ title: item.title, item: item });
+      // Alert.alert(
+      //   'Delete: '+item.title+'?',
+      //   null,
+      //   [
+      //     {text: 'Yes', onPress: (text) => this.itemsRef.child(item._key).remove()},
+      //     {text: 'Cancel', onPress: (text) => console.log('Cancelled')}
+      //   ],
+      //   {cancelable: false}
+      // );
     };
 
     return (

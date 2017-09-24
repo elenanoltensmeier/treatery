@@ -32,12 +32,23 @@ var styles = StyleSheet.create({
     paddingLeft: 16,
     paddingTop: 14,
     paddingBottom: 16,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   liContainer: {
     flex: 1,
   },
+  liImg: {
+    flex: 0,
+    width: 50,
+    height: 50
+  },
   liText: {
+    flex: 1,
     color: '#333',
+    textAlign: 'center',
     fontSize: 16,
   },
   navbar: {

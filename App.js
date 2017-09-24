@@ -5,6 +5,7 @@ import {Drawer, Router, Scene, Tabs} from 'react-native-router-flux';
 import * as firebase from 'firebase';
 import Authentication from './components/Authentication';
 import HomePage from './components/HomePage';
+import PhotoPage from './components/PhotoPage';
 import CameraPage from './components/CameraPage';
 import DrawerContent from './components/DrawerContent';
 
@@ -65,7 +66,7 @@ export default class App extends Component {
               title='Authentication'
             />
             <Drawer
-              hideNavBar
+              hideNavBar={true}
               key="drawer"
               contentComponent={DrawerContent}
             >
@@ -86,6 +87,11 @@ export default class App extends Component {
                     initial={this.state.hasToken}
                     key='HomePage'
                     title='Home Page'
+                  />
+                  <Scene
+                    component={PhotoPage}
+                    key='PhotoPage'
+                    title='Photo Page'
                   />
                 </Scene>
                 <Scene

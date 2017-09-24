@@ -2,11 +2,13 @@ import React, {Component} from 'react';
 import ReactNative from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import * as firebase from 'firebase';
+import RNFetchBlob from 'react-native-fetch-blob';
 import Camera from 'react-native-camera';
 import { Icon } from 'react-native-elements';
 import StatusBar from './StatusBar';
 import styles from '../styles';
 const {
+  ActivityIndicator,
   Alert,
   Image,
   Text,
@@ -14,6 +16,10 @@ const {
   KeyboardAvoidingView,
   TouchableHighlight
 } = ReactNative;
+const fs = RNFetchBlob.fs;
+const Blob = RNFetchBlob.polyfill.Blob;
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
+window.Blob = Blob
 
 class CameraPage extends Component {
   constructor(props) {
@@ -21,49 +27,62 @@ class CameraPage extends Component {
     this.state = {
       path: null,
       barcode: null,
-      barcodeType: null
+      barcodeType: null,
+      progress: 100
     };
     this.fireRef = firebase.storage().ref('photos');
+    this.photoRef = firebase.database().ref().child('photos');
   }
   uploadPhoto() {
     let pathArray = this.state.path.split('/');
     let firename = '/'+pathArray[pathArray.length-1];
+    let rnfbURI = RNFetchBlob.wrap(this.state.path);
 
-    var uploadTask = this.fireRef.child(firename).put(this.state.path);
-    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot) => {
-      // observe state change events such as progress
-      // get task progress, including the number of bytes uploaded and the total number of    bytes to be uploaded
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log(`Upload is ${progress}% done`);
-    
-      switch (snapshot.state) {
-        case firebase.storage.TaskState.SUCCESS: // or 'success'
-          console.log('Upload is complete');
-          break;
-        case firebase.storage.TaskState.RUNNING: // or 'running'
-          console.log('Upload is running');
-          break;
-        default:
-          console.log(snapshot.state);
-      }
-    }, (error) => {
-      console.error(error);
-    }, () => {
-      const uploadTaskSnapshot = uploadTask.snapshot;
-      // task finished
-      // states: https://github.com/invertase/react-native-firebase/blob/master/lib/modules/storage/index.js#L139
-      console.log(uploadTaskSnapshot.state === firebase.storage.TaskState.SUCCESS);
-      console.log(uploadTaskSnapshot.bytesTransferred === uploadTaskSnapshot.totalBytes);
-      console.log(uploadTaskSnapshot.metadata);
-      console.log(uploadTaskSnapshot.downloadUrl)
-    });
+    Blob.build(rnfbURI, { type : 'image/png;'})
+    .then((blob) => {      
+      var uploadTask = this.fireRef.child(firename).put(blob, { contentType : 'image/png' });
+      
+      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot) => {
+        // observe state change events such as progress
+        // get task progress, including the number of bytes uploaded and the total number of    bytes to be uploaded
+        this.setState({ progress: (snapshot.bytesTransferred / snapshot.totalBytes) * 100 });
+      
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.SUCCESS: // or 'success'
+            console.log('Upload is complete');
+            break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+            console.log('Upload is running');
+            break;
+          default:
+            console.log(snapshot.state);
+        }
+      }, (error) => {
+        console.error(error);
+      }, () => {
+        this.setState({ path: null, progress: 100 });
+        this.photoRef.push({ title: firename, url: uploadTask.snapshot.downloadURL });
+      });
+    })
+    .catch(err => console.error(err));
   }
   takePicture() {
     this.camera.capture()
       .then((data) => {
-        this.setState({ path: data.path });
+        this.setState({ photo: data, path: data.path });
       })
       .catch(err => console.error(err));
+  }
+  renderUpload() {
+    if (this.state.progress !== 100) {
+      return <ActivityIndicator size='small' color='#FFF'/>;    
+    }
+    return <Icon 
+    name='cloud-upload'
+    type='material-community'
+    color='#333333'
+    style={styles.photoButton}
+    onPress={this.uploadPhoto.bind(this)}/>;
   }
   renderCamera(){
     return (
@@ -93,12 +112,7 @@ class CameraPage extends Component {
           style={styles.preview}
         />
         <View style={styles.photoButtons}>
-          <Icon 
-              name='cloud-upload'
-              type='material-community'
-              color='#333333'
-              style={styles.photoButton}
-              onPress={this.uploadPhoto.bind(this)}/>
+          {this.renderUpload()}
           <Icon 
               name='cancel'
               type='material-community'
