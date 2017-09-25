@@ -43,8 +43,6 @@ class CameraPage extends Component {
       var uploadTask = this.fireRef.child(firename).put(blob, { contentType : 'image/png' });
       
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot) => {
-        // observe state change events such as progress
-        // get task progress, including the number of bytes uploaded and the total number of    bytes to be uploaded
         this.setState({ progress: (snapshot.bytesTransferred / snapshot.totalBytes) * 100 });
       
         switch (snapshot.state) {
