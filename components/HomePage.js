@@ -7,6 +7,7 @@ import ActionButton from './ActionButton';
 import ListItem from './ListItem';
 import styles from '../styles';
 const {
+  AsyncStorage,
   ListView,
   StyleSheet,
   TextInput,
@@ -21,35 +22,46 @@ class HomePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      type: '',
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       })
     };
-    this.itemsRef = this.getRef().child('photos');
+    this.itemsRef = this.getRef().child('offerings');
   }
   getRef() {
     return firebase.database().ref();
   }
-  listenForItems(itemsRef) {
+  componentDidMount() {
+    AsyncStorage.getItem('user').then((userString) => {
+      let user = JSON.parse(userString);
+      this.setState({ type: user.type });      
+      this.listenForItems(this.itemsRef, user.type);
+    });
+  }
+  listenForItems(itemsRef, type) {
     itemsRef.on('value', (snap) => {
 
       // get children as an array
       var items = [];
       snap.forEach((child) => {
-        items.push({
-          title: child.val().title,
-          url: child.val().url,
-          _key: child.key
+        child.forEach((item) => {
+          console.log(type+' '+item.val().type);
+          if(type != item.val().type){
+            items.push({
+              disname: item.val().disname,
+              type: item.val().type,
+              title: item.val().title,
+              url: item.val().url,
+              _key: item.key
+            });
+          }
         });
       });
       this.setState({
         dataSource: this.state.dataSource.cloneWithRows(items)
       });
-
     });
-  }
-  componentDidMount() {
-    this.listenForItems(this.itemsRef);
   }
   render() {
     return (

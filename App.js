@@ -7,6 +7,7 @@ import Authentication from './components/Authentication';
 import HomePage from './components/HomePage';
 import PhotoPage from './components/PhotoPage';
 import CameraPage from './components/CameraPage';
+import UserProfile from './components/UserProfile';
 import DrawerContent from './components/DrawerContent';
 
 const firebaseConfig = {
@@ -45,8 +46,8 @@ export default class App extends Component {
     this.state = { hasToken: false, isLoaded: false };
   }
   componentWillMount() {
-    AsyncStorage.getItem('id_token').then((token) => {
-      this.setState({ hasToken: token !== null, isLoaded: true });
+    AsyncStorage.getItem('user').then((user) => {
+      this.setState({ hasToken: user !== null, isLoaded: true });
     });
   }
   render() {
@@ -102,6 +103,16 @@ export default class App extends Component {
                     component={CameraPage}
                     key='CameraPage'
                     title='Camera Page'
+                  />
+                </Scene>
+                <Scene
+                  key="ProfileTab"
+                  title="account"
+                  icon={TabIcon}>
+                  <Scene
+                    component={UserProfile}
+                    key='UserProfile'
+                    title='User Profile'
                   />
                 </Scene>
               </Tabs>

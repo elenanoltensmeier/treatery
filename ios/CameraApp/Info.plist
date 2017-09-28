@@ -39,9 +39,7 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSCameraUsageDescription</key>
-	<String>This App lets users take a camera to be stored in the local camera roll.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<String>This App stores photoes in the local camera roll.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
 	<key>NSAppTransportSecurity</key>

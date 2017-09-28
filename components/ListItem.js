@@ -12,7 +12,7 @@ class ListItem extends Component {
             style={styles.liImg}
             source={{uri: this.props.item.url}}
           />
-          <Text style={styles.liText}>{this.props.item.title}</Text>
+          <Text style={styles.liText}>{this.props.item.disname}</Text>
         </View>
       </TouchableHighlight>
     );

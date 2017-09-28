@@ -10,6 +10,7 @@ import styles from '../styles';
 const {
   ActivityIndicator,
   Alert,
+  AsyncStorage,
   Image,
   Text,
   View,
@@ -25,22 +26,30 @@ class CameraPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      disname: '',
+      type: '',
       path: null,
       barcode: null,
       barcodeType: null,
       progress: 100
     };
     this.fireRef = firebase.storage().ref('photos');
-    this.photoRef = firebase.database().ref().child('photos');
+    this.photoRef = firebase.database().ref().child('offerings');
+  }
+  componentDidMount() {
+    AsyncStorage.getItem('user').then((userString) => {
+      let user = JSON.parse(userString);
+      this.setState({ uid: user.uid, disname: user.disname, type: user.type });
+    });
   }
   uploadPhoto() {
     let pathArray = this.state.path.split('/');
     let firename = '/'+pathArray[pathArray.length-1];
     let rnfbURI = RNFetchBlob.wrap(this.state.path);
 
-    Blob.build(rnfbURI, { type : 'image/png;'})
+    Blob.build(rnfbURI, { type : 'image/jpg;'})
     .then((blob) => {      
-      var uploadTask = this.fireRef.child(firename).put(blob, { contentType : 'image/png' });
+      var uploadTask = this.fireRef.child(firename).put(blob, { contentType : 'image/jpg' });
       
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot) => {
         this.setState({ progress: (snapshot.bytesTransferred / snapshot.totalBytes) * 100 });
@@ -59,7 +68,12 @@ class CameraPage extends Component {
         console.error(error);
       }, () => {
         this.setState({ path: null, progress: 100 });
-        this.photoRef.push({ title: firename, url: uploadTask.snapshot.downloadURL });
+        this.photoRef.child(this.state.uid).push({ 
+          title: firename, 
+          url: uploadTask.snapshot.downloadURL,
+          uid: this.state.uid,
+          disname: this.state.disname, 
+          type: this.state.type });
       });
     })
     .catch(err => console.error(err));
@@ -90,6 +104,7 @@ class CameraPage extends Component {
         }}
         style={styles.preview}
         aspect={Camera.constants.Aspect.fill}
+        playSoundOnCapture={false}
         captureTarget={Camera.constants.CaptureTarget.disk}
         onBarCodeRead={this._onBarCodeRead.bind(this)}
       >

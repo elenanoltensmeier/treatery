@@ -21,7 +21,7 @@ class PhotoPage extends Component {
     super(props);
     this.state = { loading: false };
     this.fireRef = firebase.storage().ref('photos');
-    this.photoRef = firebase.database().ref().child('photos');
+    this.photoRef = firebase.database().ref().child('offerings');
   }
   confirmRemove() {
     this.setState({ loading: true });
