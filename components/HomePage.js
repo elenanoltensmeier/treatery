@@ -23,6 +23,8 @@ class HomePage extends Component {
     super(props);
     this.state = {
       type: '',
+      latitude: null,
+      longitude: null,
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
       })
@@ -39,6 +41,42 @@ class HomePage extends Component {
       this.listenForItems(this.itemsRef, user.type);
     });
   }
+  sortArrayAsc(array, currentLat, currentLon) {
+    var that = this;
+    console.log(currentLat+' '+currentLon);
+    return array.sort(function (a,b) {
+      alat = parseFloat(a.latitude);
+      blat = parseFloat(b.latitude);
+      alon = parseFloat(a.longitude);
+      blon = parseFloat(b.longitude);
+      clat = parseFloat(currentLat);
+      clon = parseFloat(currentLon);
+      return that.calculateDistance(clat, clon, blat, blon) 
+            > that.calculateDistance(clat, clon, alat, alon) ? -1
+            : that.calculateDistance(clat, clon, blat, blon) 
+            < that.calculateDistance(clat, clon, alat, alon) ? 1
+            : 0
+    })
+  }
+  degreesToRadians(degrees) {
+    return degrees * Math.PI / 180;
+  }
+  calculateDistance(lat1, lon1, lat2, lon2) {
+    var earthRadiusKm = 6371;
+  
+    var dLat = this.degreesToRadians(lat2-lat1);
+    var dLon = this.degreesToRadians(lon2-lon1);
+  
+    lat1 = this.degreesToRadians(lat1);
+    lat2 = this.degreesToRadians(lat2);
+
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    
+    console.log(earthRadiusKm * c);
+    return earthRadiusKm * c;
+  }
   listenForItems(itemsRef, type) {
     itemsRef.on('value', (snap) => {
 
@@ -52,15 +90,26 @@ class HomePage extends Component {
               disname: item.val().disname,
               type: item.val().type,
               title: item.val().title,
+              latitude: item.val().latitude,
+              longitude: item.val().longitude,
               url: item.val().url,
               _key: item.key
             });
           }
         });
       });
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(items)
-      });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          items = this.sortArrayAsc(items, position.coords.latitude, position.coords.longitude);
+          this.setState({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            dataSource: this.state.dataSource.cloneWithRows(items)
+          });
+        },
+        (error) => console.error(error),
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+      );
     });
   }
   render() {

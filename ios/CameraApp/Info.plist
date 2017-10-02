@@ -42,6 +42,8 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>

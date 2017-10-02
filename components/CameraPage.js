@@ -31,16 +31,31 @@ class CameraPage extends Component {
       path: null,
       barcode: null,
       barcodeType: null,
-      progress: 100
+      progress: 100,
+      latitude: null,
+      longitude: null
     };
     this.fireRef = firebase.storage().ref('photos');
     this.photoRef = firebase.database().ref().child('offerings');
   }
   componentDidMount() {
+    this.getLocation();
     AsyncStorage.getItem('user').then((userString) => {
       let user = JSON.parse(userString);
       this.setState({ uid: user.uid, disname: user.disname, type: user.type });
     });
+  }
+  getLocation() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        });
+      },
+      (error) => console.error(error),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+    );
   }
   uploadPhoto() {
     let pathArray = this.state.path.split('/');
@@ -73,7 +88,9 @@ class CameraPage extends Component {
           url: uploadTask.snapshot.downloadURL,
           uid: this.state.uid,
           disname: this.state.disname, 
-          type: this.state.type });
+          type: this.state.type,
+          latitude: this.state.latitude,
+          longitude: this.state.longitude });
       });
     })
     .catch(err => console.error(err));
