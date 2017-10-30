@@ -6,6 +6,7 @@ import * as firebase from 'firebase';
 import Authentication from './components/Authentication';
 import HomePage from './components/HomePage';
 import PhotoPage from './components/PhotoPage';
+import MapPage from './components/MapPage';
 import CameraPage from './components/CameraPage';
 import UserProfile from './components/UserProfile';
 import DrawerContent from './components/DrawerContent';
@@ -93,6 +94,16 @@ export default class App extends Component {
                     component={PhotoPage}
                     key='PhotoPage'
                     title='Photo Page'
+                  />
+                </Scene>
+                <Scene
+                  key="MapTab"
+                  title="google-maps"
+                  icon={TabIcon}>
+                  <Scene
+                    component={MapPage}
+                    key='MapPage'
+                    title='Map Page'
                   />
                 </Scene>
                 <Scene

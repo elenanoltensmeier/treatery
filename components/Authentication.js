@@ -33,6 +33,7 @@ class Authentication extends Component {
   userAuth() {
     this.setState({ error: '', loading: true });
     const { email, password } = this.state;
+    console.log('email: '+email);
     firebase.auth().signInWithEmailAndPassword(email, password)
     .then(() => {
       var user = firebase.auth().currentUser;
@@ -52,7 +53,7 @@ class Authentication extends Component {
     });
   }
   listenForProfile(proRef) {
-    proRef.on('value', (snap) => {
+    proRef.once('value', (snap) => {
       this.setState({
         loading: false,
         error: ''

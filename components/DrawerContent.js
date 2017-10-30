@@ -24,14 +24,15 @@ class DrawerContent extends Component{
     drawer: React.PropTypes.object,
   }
   userLogout() {
-    firebase.auth().signOut()
-    .then(() => {
-      AsyncStorage.removeItem('user');
-      Alert.alert('Log Out Successfully!');
-      Actions.Authentication();
-    })
-    .catch((error) => {
-      console.log('Signout error: ' + error.message);
+    AsyncStorage.removeItem('user').then(() => {
+      firebase.auth().signOut()
+      .then(() => {
+        Alert.alert('Log Out Successfully!');
+        Actions.Authentication();
+      })
+      .catch((error) => {
+        console.log('Signout error: ' + error.message);
+      });
     });
   }
   render() {

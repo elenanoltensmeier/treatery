@@ -94,7 +94,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "com.cameraapp"
+        applicationId "com.mapapp"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
@@ -133,6 +133,7 @@ android {
 }
 
 dependencies {
+	compile project(':react-native-maps')
     compile project(':react-native-fetch-blob')
     compile project(':react-native-camera')
     compile project(':react-native-vector-icons')

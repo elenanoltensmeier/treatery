@@ -26,6 +26,7 @@ class CameraPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      uid: '',
       disname: '',
       type: '',
       path: null,
@@ -43,6 +44,7 @@ class CameraPage extends Component {
     AsyncStorage.getItem('user').then((userString) => {
       let user = JSON.parse(userString);
       this.setState({ uid: user.uid, disname: user.disname, type: user.type });
+      console.log('uid is: '+user.uid);
     });
   }
   getLocation() {

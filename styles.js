@@ -167,6 +167,20 @@ var styles = StyleSheet.create({
     borderRadius: 30,
     padding: 10,
     margin: 40
+  },
+  mapContainer: {
+    ...StyleSheet.absoluteFillObject,
+    height: 400,
+    width: 400,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  map: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   }
 })
 module.exports = styles

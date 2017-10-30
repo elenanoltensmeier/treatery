@@ -82,6 +82,7 @@ class HomePage extends Component {
 
       // get children as an array
       var items = [];
+      console.log(this.state.dataSource);
       snap.forEach((child) => {
         child.forEach((item) => {
           console.log(type+' '+item.val().type);
