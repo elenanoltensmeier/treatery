@@ -137,13 +137,6 @@ var styles = StyleSheet.create({
   drawerButton: {
     margin: 10
   },
-  preview: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width
-  },
   capture: {
     flex: 0,
     backgroundColor: '#fff',
@@ -168,12 +161,12 @@ var styles = StyleSheet.create({
     padding: 10,
     margin: 40
   },
-  mapContainer: {
-    ...StyleSheet.absoluteFillObject,
-    height: 400,
-    width: 400,
+  preview: {
+    flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width
   },
   map: {
     position: 'absolute',

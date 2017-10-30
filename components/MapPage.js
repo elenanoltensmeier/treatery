@@ -28,8 +28,8 @@ class MapPage extends Component {
       region: {
         latitude: 37.78825,
         longitude: -122.4324,
-        latitudeDelta: 0.015,
-        longitudeDelta: 0.0121,
+        latitudeDelta: 0.00922*0.5,
+        longitudeDelta: 0.00421*0.5
       },
       polylineCoords: []
     };
@@ -102,7 +102,6 @@ class MapPage extends Component {
       longitude: coords.longitude
     };
     this.coordRef.child(this.state.uid).once('value', function(snapshot) {
-      console.log(snapshot.val());
       if(snapshot.val() === null){
         that.coordRef.child(that.state.uid).set(data);
         that.setState({ loading: false });
@@ -120,7 +119,6 @@ class MapPage extends Component {
       }
     })
     .catch(err => console.error(err));
-    
   }
   render() {
     return (
