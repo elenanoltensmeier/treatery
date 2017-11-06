@@ -81,16 +81,13 @@ class HomePage extends Component {
     var average = 0;
     var total = 0;
     var count = 0;
-    console.log(ratings);
     for(var key in ratings){
       if (ratings.hasOwnProperty(key)) {
         total += parseFloat(ratings[key].rating);
         count += 1;
-        console.log(total)
         average = total/count;
       }
     }
-    console.log(average);
     return average;
   }
   listenForItems(itemsRef, type) {

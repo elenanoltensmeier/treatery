@@ -1,4 +1,4 @@
-package com.mapapp;
+package com.completedapp;
 
 import android.app.Application;
 

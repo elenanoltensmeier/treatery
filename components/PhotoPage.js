@@ -48,7 +48,7 @@ class PhotoPage extends Component {
   }
   renderIconOrSpinner() {
     if (this.state.loading) {
-        return <ActivityIndicator size='small' color='#FFF' />;    
+        return <ActivityIndicator size='small' color='#888' />;    
     }
     return <Icon 
       name='delete'
