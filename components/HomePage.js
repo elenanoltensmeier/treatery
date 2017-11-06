@@ -22,7 +22,7 @@ class HomePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      type: '',
+      uid: '',
       latitude: null,
       longitude: null,
       dataSource: new ListView.DataSource({
@@ -37,7 +37,7 @@ class HomePage extends Component {
   componentDidMount() {
     AsyncStorage.getItem('user').then((userString) => {
       let user = JSON.parse(userString);
-      this.setState({ type: user.type });      
+      this.setState({ uid: user.uid });      
       this.listenForItems(this.itemsRef, user.type);
     });
   }
@@ -77,40 +77,58 @@ class HomePage extends Component {
     console.log(earthRadiusKm * c);
     return earthRadiusKm * c;
   }
+  averageRating(ratings) {
+    var average = 0;
+    var total = 0;
+    var count = 0;
+    console.log(ratings);
+    for(var key in ratings){
+      if (ratings.hasOwnProperty(key)) {
+        total += parseFloat(ratings[key].rating);
+        count += 1;
+        console.log(total)
+        average = total/count;
+      }
+    }
+    console.log(average);
+    return average;
+  }
   listenForItems(itemsRef, type) {
     itemsRef.on('value', (snap) => {
-
       // get children as an array
       var items = [];
-      console.log(this.state.dataSource);
       snap.forEach((child) => {
-        child.forEach((item) => {
-          console.log(type+' '+item.val().type);
-          if(type != item.val().type){
+        if(this.props.actorId == null || this.props.actorId === child.key){
+          child.forEach((item) => {
             items.push({
               disname: item.val().disname,
               type: item.val().type,
               title: item.val().title,
+              rating: this.averageRating(item.val().ratings),
               latitude: item.val().latitude,
               longitude: item.val().longitude,
               url: item.val().url,
+              uid: child.key,
               _key: item.key
             });
-          }
-        });
-      });
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          items = this.sortArrayAsc(items, position.coords.latitude, position.coords.longitude);
-          this.setState({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            dataSource: this.state.dataSource.cloneWithRows(items)
           });
-        },
-        (error) => console.error(error),
-        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
-      );
+        }
+      });
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(items)
+      });
+      // navigator.geolocation.getCurrentPosition(
+      //   (position) => {
+      //     items = this.sortArrayAsc(items, position.coords.latitude, position.coords.longitude);
+      //     this.setState({
+      //       latitude: position.coords.latitude,
+      //       longitude: position.coords.longitude,
+      //       dataSource: this.state.dataSource.cloneWithRows(items)
+      //     });
+      //   },
+      //   (error) => console.error(error),
+      //   { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+      // );
     });
   }
   render() {
@@ -135,7 +153,7 @@ class HomePage extends Component {
   }
   _renderItem(item) {
     const onPress = () => {
-      Actions.PhotoPage({ title: item.title, item: item });
+      Actions.PhotoPage({ title: item.title, item: item, uid: this.state.uid });
       // Alert.alert(
       //   'Delete: '+item.title+'?',
       //   null,

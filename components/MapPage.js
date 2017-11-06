@@ -6,9 +6,11 @@ import MapView from 'react-native-maps';
 import { Icon } from 'react-native-elements';
 import StatusBar from './StatusBar';
 import styles from '../styles';
+import markerImg from './imgs/human-pin-s.png';
 const {
   ActivityIndicator,
   Alert,
+  Animated,
   AsyncStorage,
   Image,
   Text,
@@ -31,12 +33,14 @@ class MapPage extends Component {
         latitudeDelta: 0.00922*0.5,
         longitudeDelta: 0.00421*0.5
       },
-      polylineCoords: []
+      polylineCoords: [],
+      actors: []
     };
     this.coordRef = firebase.database().ref().child('actors');
   }
   componentDidMount() {
     this.getLocation();
+    this.listenForActors();
     AsyncStorage.getItem('user').then((userString) => {
       let user = JSON.parse(userString);
       this.setState({ uid: user.uid, disname: user.disname, type: user.type });
@@ -51,6 +55,7 @@ class MapPage extends Component {
   getLocation() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        console.log(position);
         let region = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -62,6 +67,58 @@ class MapPage extends Component {
       (error) => console.error(error),
       { enableHighAccuracy: true, timeout: 30000, maximumAge: 1000 },
     );
+  }
+  findActor(key, actors){
+    for (var i=0; i < actors.length; i++) {
+      if (actors[i]._key === key) {
+        return JSON.parse(JSON.stringify(actors[i]));
+      }
+    }
+    return null;
+  }
+  listenForActors() {
+    this.coordRef.on('value', (snap) => {
+      var items = [];
+      snap.forEach((item) => {
+        var actor = this.findActor(item.key, this.state.actors);
+        if(actor === null){
+          items.push({
+            disname: item.val().disname,
+            type: item.val().type,
+            coordinate: {
+              latitude: item.val().latitude,
+              longitude: item.val().longitude
+            },
+            coordinates: [
+              {
+                latitude: item.val().latitude,
+                longitude: item.val().longitude
+              }
+            ],
+            _key: item.key
+          });
+        }else if(actor.coordinate.latitude !== item.val().latitude || actor.coordinate.longitude !== item.val().longitude){
+          actor.coordinates.push({
+              latitude: item.val().latitude,
+              longitude: item.val().longitude
+          });
+          actor.coordinate = {
+            latitude: item.val().latitude,
+            longitude: item.val().longitude
+          }
+          items.push(
+            actor
+          )
+        }else{
+          items.push(
+            actor
+          )
+        }
+      });
+      this.setState({
+        actors: items
+      });
+    });
   }
   onRegionChange(region) {
     this.setState({ region });
@@ -120,6 +177,9 @@ class MapPage extends Component {
     })
     .catch(err => console.error(err));
   }
+  viewList(actorId) {
+    Actions.HomePage({actorId: actorId});
+  }
   render() {
     return (
       <View style ={styles.preview}>
@@ -128,12 +188,31 @@ class MapPage extends Component {
           region={this.state.region}
           onRegionChange={this.onRegionChange.bind(this)}
         >
+        {this.state.actors.map(marker => (
+          <MapView.Marker
+            coordinate={marker.coordinate}
+            image={markerImg}
+            title={marker.disname}
+            description={marker.type}
+            onCalloutPress={() => this.viewList(marker._key)}
+          >
+          </MapView.Marker>
+        ))}
+        {this.state.actors.map(marker => (
+          <MapView.Polyline
+            key={marker._key}
+            coordinates={marker.coordinates}
+            strokeColor='rgba(0,153,204,0.5)'
+            fillColor='rgba(255,0,0,0.5)'
+            strokeWidth={5}
+          />
+        ))}
           <MapView.Polyline
             key={1}
             coordinates={this.state.polylineCoords}
             strokeColor='rgba(0,153,204,0.5)'
             fillColor='rgba(255,0,0,0.5)'
-            strokeWidth={1}
+            strokeWidth={5}
           />
         </MapView>
         <Icon 

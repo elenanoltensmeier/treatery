@@ -174,6 +174,9 @@ var styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0
+  },
+  callout: {
+    width: 60
   }
 })
 module.exports = styles

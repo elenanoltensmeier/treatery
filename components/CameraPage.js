@@ -91,6 +91,7 @@ class CameraPage extends Component {
           uid: this.state.uid,
           disname: this.state.disname, 
           type: this.state.type,
+          ratings: {},
           latitude: this.state.latitude,
           longitude: this.state.longitude });
       });
