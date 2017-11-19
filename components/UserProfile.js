@@ -5,10 +5,7 @@ import { Icon } from 'react-native-elements';
 import StatusBar from './StatusBar';
 import styles from '../styles';
 const {
-  //TESTETETTTTTE
-  //TEST
-  //TEST
-  //TEST
+  // test test
   AsyncStorage,
   ActivityIndicator,
   Alert,
@@ -21,6 +18,9 @@ const {
   KeyboardAvoidingView,
   TouchableHighlight
 } = ReactNative;
+
+
+
 
 class UserProfile extends Component {
   constructor(props) {
