@@ -12,12 +12,12 @@ import UserProfile from './components/UserProfile';
 import DrawerContent from './components/DrawerContent';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAbQn5CP8cU80pFhrmmTmDw5w9SOc_QfGE",
-  authDomain: "securedbase-d861b.firebaseapp.com",
-  databaseURL: "https://securedbase-d861b.firebaseio.com",
-  projectId: "securedbase-d861b",
-  storageBucket: "securedbase-d861b.appspot.com",
-  messagingSenderId: "3497891805"
+    apiKey: "AIzaSyDRhjtMNcEKqmsXxOFtg1m1XicK_GgOrHA",
+    authDomain: "treatery-83575.firebaseapp.com",
+    databaseURL: "https://treatery-83575.firebaseio.com",
+    projectId: "treatery-83575",
+    storageBucket: "treatery-83575.appspot.com",
+    messagingSenderId: "600213982120"
 };
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 console.ignoredYellowBox = [
@@ -25,7 +25,7 @@ console.ignoredYellowBox = [
 ];
 const MenuIcon = () => {
   return (
-    <Icon 
+    <Icon
     name='menu'
     type='material-community'
     color='#333333' />
@@ -34,7 +34,7 @@ const MenuIcon = () => {
 
 const TabIcon = ({ focused, title }) => {
   return (
-    <Icon 
+    <Icon
       name={title}
       type='material-community'
       color={focused ? '#333333' : '#c0c0c0'} />
