@@ -5,6 +5,10 @@ import { Icon } from 'react-native-elements';
 import StatusBar from './StatusBar';
 import styles from '../styles';
 const {
+  //TESTETETTTTTE
+  //TEST
+  //TEST
+  //TEST
   AsyncStorage,
   ActivityIndicator,
   Alert,
