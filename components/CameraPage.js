@@ -192,7 +192,7 @@ class CameraPage extends Component {
   }
 
 
-efefsefs
+//TESTER ALT
 
 }
 module.exports = CameraPage;
