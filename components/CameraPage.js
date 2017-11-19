@@ -65,12 +65,12 @@ class CameraPage extends Component {
     let rnfbURI = RNFetchBlob.wrap(this.state.path);
 
     Blob.build(rnfbURI, { type : 'image/jpg;'})
-    .then((blob) => {      
+    .then((blob) => {
       var uploadTask = this.fireRef.child(firename).put(blob, { contentType : 'image/jpg' });
-      
+
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot) => {
         this.setState({ progress: (snapshot.bytesTransferred / snapshot.totalBytes) * 100 });
-      
+
         switch (snapshot.state) {
           case firebase.storage.TaskState.SUCCESS: // or 'success'
             console.log('Upload is complete');
@@ -85,11 +85,11 @@ class CameraPage extends Component {
         console.error(error);
       }, () => {
         this.setState({ path: null, progress: 100 });
-        this.photoRef.child(this.state.uid).push({ 
-          title: firename, 
+        this.photoRef.child(this.state.uid).push({
+          title: firename,
           url: uploadTask.snapshot.downloadURL,
           uid: this.state.uid,
-          disname: this.state.disname, 
+          disname: this.state.disname,
           type: this.state.type,
           ratings: {},
           latitude: this.state.latitude,
@@ -107,9 +107,9 @@ class CameraPage extends Component {
   }
   renderUpload() {
     if (this.state.progress !== 100) {
-      return <ActivityIndicator size='small' color='#FFF'/>;    
+      return <ActivityIndicator size='small' color='#FFF'/>;
     }
-    return <Icon 
+    return <Icon
     name='cloud-upload'
     type='material-community'
     color='#333333'
@@ -128,7 +128,7 @@ class CameraPage extends Component {
         captureTarget={Camera.constants.CaptureTarget.disk}
         onBarCodeRead={this._onBarCodeRead.bind(this)}
       >
-        <Icon 
+        <Icon
           name='camera-iris'
           type='material-community'
           color='#333333'
@@ -146,7 +146,7 @@ class CameraPage extends Component {
         />
         <View style={styles.photoButtons}>
           {this.renderUpload()}
-          <Icon 
+          <Icon
               name='cancel'
               type='material-community'
               color='#333333'
@@ -165,7 +165,7 @@ class CameraPage extends Component {
         <Text>Barcode Found!</Text>
         <Text>{this.state.barcode}</Text>
         <Text>{this.state.barcodeType}</Text>
-        <Icon 
+        <Icon
               name='cancel'
               type='material-community'
               color='#333333'
@@ -182,7 +182,7 @@ class CameraPage extends Component {
     }else{
       return this.renderCamera();
     }
-  }  
+  }
   render() {
     return (
       <View style={styles.panelContrainer}>
