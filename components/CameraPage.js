@@ -190,9 +190,5 @@ class CameraPage extends Component {
       </View>
     )
   }
-
-
-//TESTER ALT
-
 }
 module.exports = CameraPage;
